@@ -1,13 +1,24 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <zconf.h>
+
 #define true 1
 char args[100];
 char** argv;
+char* pathVar;
+char* username;
+char* hostname;
+size_t len = 64;
+void prompt(){
+    pathVar=getenv("PATH");
+    printf("[{%s}@{%s}{%s}]:? ",username,hostname,pathVar);
+}
 void helper(){
     int i=0;
     while(argv[i]!=NULL)
     {
-        printf("1:%s\n",argv[i]);
+        printf("%d:%s\n",i,argv[i]);
         i++;
     }
 }
@@ -32,10 +43,21 @@ void getInput(char** argv, char* args)
 }
 
 int main() {
+    username=getenv("USER");
+    hostname=getenv("HOST");
     while(true) {
         argv = (char **)malloc(sizeof(char *) * 100);
+        prompt();
         getInput(argv, args);
         helper();
+        if(strcmp(argv[0],"exit")==0)
+        {
+            if(argv[1]!=NULL){
+                exit(argv[1]);
+            }else{
+                exit(0);
+            }
+        }
     }
     return 0;
 }
