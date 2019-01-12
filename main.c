@@ -25,6 +25,11 @@ void execute(){
         //fork sie wyjebal
         //exit 1
     }
+    /**
+     * wait pid
+     * status
+     * jak sie wyjebalo to sie wyjebalo
+     * **/
 }
 void prompt(){
     pathVar=getenv("PATH");
