@@ -10,6 +10,22 @@ char* pathVar;
 char* username;
 char* hostname;
 size_t len = 64;
+void execute(){
+    pid_t pid = fork();
+    if(pid==0){
+        if(execvp(NULL,NULL)<0)
+        {
+            //wyjebalo sie;
+            //error
+            //exit 1
+        }else{
+            //wykonalo sie;
+        }
+    }else if(pid==-1){
+        //fork sie wyjebal
+        //exit 1
+    }
+}
 void prompt(){
     pathVar=getenv("PATH");
     printf("[{%s}@{%s}{%s}]:? ",username,hostname,pathVar);
