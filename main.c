@@ -6,17 +6,18 @@
 
 #define true 1
 char args[100];
+char hstring[128];
 char** argv;
 char* pathVar;
 char* username;
-char* hostname;
+char hostname[1024];
 size_t len = 64;
 char cwd[PATH_MAX];
 char getDirectory(){
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
 
     }else{
-        perror("getcwd() error");
+        perror("getcwd() error\n");
     }
 }
 void execute(){
@@ -25,15 +26,14 @@ void execute(){
     if(pid==0){
         if(execvp(*argv,argv)<0)
         {
-            //wyjebalo sie;
-            //error
-            //exit 1
+            printf("Error: Failed to execute command\n");
+            exit(1);
         }else{
             //wykonalo sie;
         }
     }else if(pid==-1){
-        //fork sie wyjebal
-        //exit 1
+        printf("Failed to fork\n");
+        exit(1);
     }
     int w8 = waitpid(pid,&status,0);
 }
@@ -75,13 +75,17 @@ void clear(){
 
 int main() {
     username=getenv("USER");
-    hostname=getenv("HOST");
+    hostname[1023] = '\0';
+    gethostname(hostname, 1023);
     while(true) {
         argv = (char **)malloc(sizeof(char *) * 100);
         prompt();
         getInput(argv, args);
         helper();
-        if(strcmp(argv[0],"exit")==0)
+        strcpy(hstring,argv[0]);
+        if(strcmp(&hstring[0], "./") == 0){
+            system(hstring);
+        }else if(strcmp(argv[0],"exit")==0)
         {
             if(argv[1]!=NULL){
                 exit(argv[1]);
@@ -90,7 +94,26 @@ int main() {
             }
         } else if(strcmp(argv[0],"cd")==0){
             chdir(argv[1]);
-        } else {
+        } else if(strcmp(argv[0],"echo")==0){
+            if(argv[1]!=NULL) {
+                printf((char *) argv[1]);
+                printf("\n");
+            }else{
+                printf("\n");
+            }
+
+        } else if(strcmp(argv[0],"help")==0){
+            printf("This program simulates shell\n");
+            printf("Example commands:\n");
+            printf("cd - changes directory\n");
+            printf("ls - shows files in current dir\n");
+            printf("date - shows date");
+
+        }
+//        else if (strcmp(argv[0])){
+//
+//        }
+        else{
             execute();
         }
 
